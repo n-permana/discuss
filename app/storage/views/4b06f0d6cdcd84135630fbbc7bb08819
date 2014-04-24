@@ -1,0 +1,48 @@
+
+<?php $__env->startSection('content'); ?>
+<div class='row'>
+    <div class='col-md-2'>
+        <?php echo link_to("question/categorie/all"," All Categories",['class'=>'label label-default glyphicon glyphicon-th-list']); ?>
+    </div>
+    <div class='col-md-6'>
+        <?php foreach($categories as $categorie): ?>
+            <?php if($categorie->id == $current): ?>
+                <?php echo link_to("question/categorie/{$categorie->id}",$categorie->categorie_name,['class'=>'label label-warning']); ?>
+            <?php else: ?>
+                <?php echo link_to("question/categorie/{$categorie->id}",$categorie->categorie_name,['class'=>'label label-info']); ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+    <div class='col-md-4'>
+        <?php echo Form::open(['class'=>'form-inline','role'=>'form']); ?>
+        <div class='form-group'>
+            <?php echo Form::text('search',null,['class'=>'form-control']); ?>
+        </div>
+        <?php echo Form::submit('Search',['class' => 'btn btn-default']); ?>
+        <?php echo Form::close(); ?>
+    </div>
+</div>
+<div class='row' style="margin-top: 10px;padding-left: 20px;">
+    <table class='table-striped col-md-10'>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Title</th>
+                <th>Response</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($questions as $question): ?>
+            <tr>
+                <td><?php echo link_to("question/categorie/{$question->categorie->categorie_name}",$question->categorie->categorie_name); ?></td>
+                <td><?php echo link_to("question/{$question->id}",$question->title); ?></td>
+                <td><?php echo $question->post_count; ?></td>
+                <td><?php echo link_to("question/user/{$question->user->id}",$question->user->username); ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php $__env->stopSection(); ?>    
+<?php echo $__env->make('layout.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

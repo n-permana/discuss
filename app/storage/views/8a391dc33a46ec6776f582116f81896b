@@ -1,0 +1,87 @@
+
+<?php $__env->startSection('content'); ?>
+<div class="row  col-md-10">
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4><?php echo $question->title; ?></h4>
+                <p>Question by 
+                    <?php if(Auth::check()): ?>
+                        <?php if($question->user->username != Auth::user()->username): ?>
+                            <?php echo link_to("question/user/{$question->user->id}",$question->user->username); ?>
+                        <?php else: ?>
+                            You
+                        <?php endif; ?>
+                    <?php else: ?>     
+                         <?php echo link_to("question/user/{$question->user->id}",$question->user->username); ?>
+                    <?php endif; ?>
+                    at <?php echo $question->created_at; ?></p>
+                <hr>
+                <p>
+                    <?php echo $question->content; ?>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+        <hr>
+        <h3>Answers : </h3>
+        <?php foreach($answers as $answer): ?>
+               <div class="row">
+                    <div class="panel panel-default" <?php if($question->best_answer_id == $answer->id): ?> style="background-color:lavender;" <?php endif; ?>>
+                        <div class="panel-body">
+                            <?php if(Auth::check()): ?>
+                                <?php if($answer->user->username != Auth::user()->username): ?>
+                                    <?php echo link_to("question/user/{$answer->user_id}",$answer->user->username); ?> at <?php echo $answer->created_at; ?>
+                                <?php else: ?>
+                                    <?php echo $answer->user->username; ?> at <?php echo $answer->created_at; ?>
+                                <?php endif; ?>
+                             <?php else: ?>
+                                <?php echo $answer->user->username; ?> at <?php echo $answer->created_at; ?>
+                             <?php endif; ?>
+                             
+                             <?php if(Auth::check()): ?>
+                                <?php if($answer->user_id != Auth::user()->id && $question_owner == Auth::user()->id && $question->best_answer_id == 0): ?>
+                                    <?php echo link_to("answer/best/{$answer->id}/{$question_id}",'Mark as Answer',['class'=>'label label-primary']); ?>
+                                <?php endif; ?>
+                             <?php endif; ?>
+                            
+                            <?php if($question->best_answer_id == $answer->id): ?>
+                                <span class="label label-primary glyphicon glyphicon-ok"> Answer</span>
+                            <?php endif; ?>
+                            <hr>
+                            <?php echo $answer->answer; ?>
+                        </div>
+                    </div>
+                </div>
+        <?php endforeach; ?>
+        
+        <?php if(Auth::guest()): ?>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <?php echo link_to('users/create','Sign Up'); ?> or <?php echo link_to('login','Login'); ?> to reply
+                </div>
+            </div>
+        </div>
+        <?php else: ?>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <?php echo Form::open(['route'=>'answer.store']); ?>
+                    <div class="form-group">
+                        <?php echo Form::textArea('answer',null,['cols'=>150,'rows'=>5,'class'=>'form-control']); ?>
+                        <?php echo Form::hidden('question_id',"{$question_id}"); ?>
+                        <?php echo Form::hidden('user_id',null); ?>
+                    </div>
+                    <div class="form-group">
+                        <?php echo Form::submit('Reply', ['class' => 'btn btn-primary']); ?>
+                    </div>
+                    <?php echo Form::close(); ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+</div>
+<?php $__env->stopSection(); ?>    
+<?php echo $__env->make('layout.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
